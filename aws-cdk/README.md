@@ -1,8 +1,6 @@
-# Welcome to your CDK TypeScript project
+Pass the bucket name and the crawlwer names as parameters like this:
+`cdk deploy --parameters BucketName=com.varunmuriyanat-business-vault --parameters CrawlerName=raw-crawler`
 
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 
