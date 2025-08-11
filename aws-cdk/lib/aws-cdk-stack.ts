@@ -57,7 +57,13 @@ export class AwsCdkStack extends cdk.Stack {
           { path: `s3://${s3Bucket.bucketName}/` }
         ]
       },
-      name: crawlerNameParam.valueAsString
+      name: crawlerNameParam.valueAsString,
+      schedule: {
+        scheduleExpression: 'cron(0 2 * * ? *)', // every day at 2 AM UTC
+      },
+      recrawlPolicy: {
+        recrawlBehavior: 'CRAWL_NEW_FOLDERS_ONLY',
+      },
     });
   }
 }
