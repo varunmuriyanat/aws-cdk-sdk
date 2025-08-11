@@ -3,6 +3,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as glue from 'aws-cdk-lib/aws-glue';
+import * as emr from 'aws-cdk-lib/aws-emr';
 import { Construct } from 'constructs';
  
 export class AwsCdkStack extends cdk.Stack {
@@ -21,6 +22,33 @@ export class AwsCdkStack extends cdk.Stack {
       description: 'The name of the Glue crawler',
       default: 'input-files-crawler',
     });
+
+    // not covered under the free plan
+    // // Basic EMR cluster
+    // new emr.CfnCluster(this, 'MyEmrCluster', {
+    //   name: 'basic-emr-cluster',
+    //   releaseLabel: 'emr-6.15.0', // Use a recent EMR release
+    //   applications: [
+    //     { name: 'Hadoop' },
+    //     { name: 'Spark' }
+    //   ],
+    //   instances: {
+    //     masterInstanceGroup: {
+    //       instanceCount: 1,
+    //       instanceType: 'm5.xlarge',
+    //     },
+    //     coreInstanceGroup: {
+    //       instanceCount: 2,
+    //       instanceType: 'm5.xlarge',
+    //     },
+    //     ec2SubnetId: 'subnet-xxxxxxxx', // Replace with your subnet ID
+    //     ec2KeyName: 'my-key-pair', // Optional: replace with your EC2 key pair name
+    //   },
+    //   jobFlowRole: 'EMR_EC2_DefaultRole',
+    //   serviceRole: 'EMR_DefaultRole',
+    //   visibleToAllUsers: true,
+    //   logUri: 's3://com.varunmuriyanat-emr-logs/',
+    // });
 
     const s3Bucket = new s3.Bucket(this, 'muriyanv', {
       bucketName: bucketNameParam.valueAsString,
