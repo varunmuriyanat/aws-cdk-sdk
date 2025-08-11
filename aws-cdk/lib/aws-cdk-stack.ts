@@ -65,6 +65,49 @@ export class AwsCdkStack extends cdk.Stack {
         recrawlBehavior: 'CRAWL_NEW_FOLDERS_ONLY',
       },
     });
+
+    // IAM Role for Glue Jobs
+        const glueJobRole = new iam.Role(this, 'GlueJobRole', {
+          assumedBy: new iam.ServicePrincipal('glue.amazonaws.com'),
+        });
+    
+        glueJobRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSGlueServiceRole'));    
+
+        glueJobRole.addToPolicy(new iam.PolicyStatement({
+          actions: [
+            "s3:GetObject",
+            "s3:PutObject",
+            "s3:ListBucket",
+          ],
+          resources: [
+            "arn:aws:s3:::com.varunmuriyanat-scripts",
+            "arn:aws:s3:::com.varunmuriyanat-scripts/*",
+            "arn:aws:s3:::com.varunmuriyanat.output",
+            "arn:aws:s3:::com.varunmuriyanat.output/*",
+            "arn:aws:s3:::com.varunmuriyanat.input",
+            "arn:aws:s3:::com.varunmuriyanat.input/*"
+          ],
+        }));
+    
+        // Glue Job 1
+        const job1 = new glue.CfnJob(this, 'Job1', {
+          name: 'MyGlueJob1',
+          role: glueJobRole.roleArn,
+          command: {
+            name: 'glueetl',
+            scriptLocation: 's3://com.varunmuriyanat-scripts/glue_job_01.py',
+            pythonVersion: '3',
+          },
+          glueVersion: '3.0',
+          numberOfWorkers: 2,
+          workerType: 'G.1X',
+          defaultArguments: {
+            '--job-language': 'python',
+            '--enable-continuous-cloudwatch-log': 'true',
+            '--enable-metrics': '',
+          },
+          maxRetries: 1,
+        });
   }
 }
  
