@@ -1,9 +1,11 @@
+
 import sys
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
+from awsglue.dynamicframe import DynamicFrame
 
 # Get job arguments
 args = getResolvedOptions(sys.argv, ["JOB_NAME", "INPUT_PATH", "OUTPUT_PATH", "OUTPUT_FORMAT"])
@@ -25,23 +27,24 @@ input_dynamic_frame = glueContext.create_dynamic_frame.from_options(
 # (Optional) Convert to DataFrame for Spark transformations
 df = input_dynamic_frame.toDF()
 
-# Example transformation: filter customerid > 25
-df_filtered = (
-        df.filter("customerid > 25")
-            .select(
-                "customerid",
-                "firstname",
-                "lastname",
-                "email",
-                "phone",
-                "country",
-                "datejoined",
-                "isactive"
-            )
-)
+# # Example transformation: filter customerid > 25
+# df_filtered = (
+#         df.filter("customerid > 25")
+#             .select(
+#                 "customerid",
+#                 "firstname",
+#                 "lastname",
+#                 "email",
+#                 "phone",
+#                 "country",
+#                 "datejoined",
+#                 "isactive"
+#             )
+# )
 
 # Convert back to DynamicFrame
-output_dynamic_frame = glueContext.create_dynamic_frame.from_df(df_filtered, glueContext)
+# output_dynamic_frame = glueContext.create_dynamic_frame.from_df(df_filtered, glueContext)
+output_dynamic_frame = DynamicFrame.fromDF(df, glueContext, "output_dynamic_frame")
 
 # Write output in specified format (parquet or orc)
 output_format = args["OUTPUT_FORMAT"].lower()
