@@ -8,14 +8,27 @@ import { Construct } from 'constructs';
 export class AwsCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
- 
+
+    // Define parameters
+    const bucketNameParam = new cdk.CfnParameter(this, 'BucketName', {
+      type: 'String',
+      description: 'The name of the S3 bucket',
+      default: 'com.varunmuriyanat.input-files',
+    });
+
+    const crawlerNameParam = new cdk.CfnParameter(this, 'CrawlerName', {
+      type: 'String',
+      description: 'The name of the Glue crawler',
+      default: 'input-files-crawler',
+    });
+
     const s3Bucket = new s3.Bucket(this, 'muriyanv', {
-      bucketName: 'com.varunmuriyanat.input-files',
+      bucketName: bucketNameParam.valueAsString,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
- 
+
     s3Bucket.grantRead(new iam.AccountRootPrincipal());
 
     // Glue database
@@ -44,9 +57,8 @@ export class AwsCdkStack extends cdk.Stack {
           { path: `s3://${s3Bucket.bucketName}/` }
         ]
       },
-      name: 'input-files-crawler'
+      name: crawlerNameParam.valueAsString
     });
-
   }
 }
  
