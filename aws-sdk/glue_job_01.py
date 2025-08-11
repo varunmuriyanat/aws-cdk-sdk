@@ -26,15 +26,19 @@ input_dynamic_frame = glueContext.create_dynamic_frame.from_options(
 df = input_dynamic_frame.toDF()
 
 # Example transformation: filter customerid > 25
-df_filtered = df.filter("customerid > 25")
-                .select("customerid",
-                        "firstname",
-                        "lastname",
-                        "email",
-                        "phone",
-                        "country",
-                        "datejoined",
-                        "isactive")
+df_filtered = (
+        df.filter("customerid > 25")
+            .select(
+                "customerid",
+                "firstname",
+                "lastname",
+                "email",
+                "phone",
+                "country",
+                "datejoined",
+                "isactive"
+            )
+)
 
 # Convert back to DynamicFrame
 output_dynamic_frame = glueContext.create_dynamic_frame.from_df(df_filtered, glueContext)
