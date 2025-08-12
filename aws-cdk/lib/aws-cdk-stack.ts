@@ -4,6 +4,7 @@ import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as glue from 'aws-cdk-lib/aws-glue';
 import * as emr from 'aws-cdk-lib/aws-emr';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
  
 export class AwsCdkStack extends cdk.Stack {
@@ -21,6 +22,13 @@ export class AwsCdkStack extends cdk.Stack {
       type: 'String',
       description: 'The name of the Glue crawler',
       default: 'input-files-crawler',
+    });
+
+    const validateLambda = new lambda.Function(this, 'ValidateLambda', {
+      runtime: lambda.Runtime.PYTHON_3_9,
+      handler: 'validate.handler', // filename.handlerFunction
+      code: lambda.Code.fromAsset('lambda/validate'), // directory with your code
+      timeout: cdk.Duration.seconds(10),
     });
 
     // not covered under the free plan
